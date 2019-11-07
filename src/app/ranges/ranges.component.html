@@ -1,0 +1,34 @@
+<h2>Gerer vos ranges</h2>
+
+<div class="row">
+    <div class="col-md-4">
+        <h6>Saisissez votre range :</h6>
+        <textarea class="form-control" id="rangeText" rows="3" [(ngModel)]="rangeText"></textarea>
+        <button type="button" class="btn btn-primary" (click)="onSubmit()">Valider ==></button>
+    </div>
+    <div class="col-md-8">
+        <table class="table table-sm">
+            <tr *ngFor="let numRows of rangeRows">
+                <td *ngFor="let numCols of rangeCols"
+                    [ngStyle]="{'background-color': range.get(rangeTable[numRows][numCols]).ratio==0 ? 'white' : 'green'}">
+                    {{ rangeTable[numRows][numCols] }}
+                </td>
+            </tr>
+        </table>
+        <div class="alert alert-success" role="alert" *ngIf="submitSuccess">
+            {{ submitSuccess }}
+        </div>
+        <div class="alert alert-danger" role="alert" *ngFor="let error of submitErrors">
+            {{ error }}
+        </div>
+        <input type="text" class="form-control" [(ngModel)]="rangeName">
+        <button type="button" class="btn btn-primary" (click)="onSave()">Mémoriser ==></button>
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let range of savedRanges; let i = index">
+                {{ range.getName() }}
+                <button type="button" class="btn btn-primary" (click)="onLoad(i)">Load</button>
+                <button type="button" class="btn btn-primary" (click)="onDelete(i)">Delete</button>
+            </li>
+        </ul>
+    </div>
+</div>
