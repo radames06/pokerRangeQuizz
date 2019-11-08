@@ -8,4 +8,5 @@ export class RangeVal {
     public setRatio(newRatio: number) {
         this.ratio = newRatio;
     }
+    public getRatio() { return this.ratio; }
 }

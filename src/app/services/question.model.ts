@@ -60,15 +60,62 @@ export class Card {
 
         return handString;
     }
+    public getCardNumber(): number {
+        return this.level;
+    }
+    public getImg(): String {
+        return "assets/img/"+this.getCardString()+".gif";
+    }
 }
 
 export class Question {
-    private cards: Card[];
+    private cards: Card[] = [];
+    private rangeName: String;
+    private answer: boolean; // true : in range / false : not in range
+    private correctAnswer : boolean; // la réponse qu'il faudrait donner
+    private result: boolean; // true : reponse correcte
 
-    constructor () {
+    constructor (rangeName: String) {
         this.cards.push(new Card());
         this.cards.push(new Card());
+        this.cards[0].randomCard();
         this.cards[1].randomCard();
-        this.cards[2].randomCard();
+        this.rangeName = rangeName;
+    }
+    setCorrectAnswer(correctAnswer: boolean) {
+        this.correctAnswer = correctAnswer;
+    }
+    getCorrectAnswer() {
+        return this.correctAnswer;
+    }
+    setAnswer(answer: boolean) {
+        this.answer = answer;
+        this.setResult();
+        console.log("answer : " + answer);
+    }
+    setResult() {
+        this.result = (this.answer == this.correctAnswer);
+    }
+    getResult() {
+        return this.result;
+    }
+    getCards() {
+        return this.cards;
+    }
+    getRange() {
+        return this.rangeName;
+    }
+    getCardsFormatted() {
+        var card1 = this.cards[0].getCardString().substr(0,1);
+        var card2 = this.cards[1].getCardString().substr(0,1);
+        var color1 = this.cards[0].getCardString().substr(1,1);
+        var color2 = this.cards[1].getCardString().substr(1,1);
+        var level1 = this.cards[0].getCardNumber();
+        var level2 = this.cards[1].getCardNumber();
+                
+        // paire
+        if (card1 == card2) { return card1+card2; }
+        else if (color1 == color2) { return (level1>level2) ? card1+card2+'s' : card2+card1+'s' }
+        else { return (level1>level2) ? card1+card2+'o' : card2+card1+'o' }
     }
 }

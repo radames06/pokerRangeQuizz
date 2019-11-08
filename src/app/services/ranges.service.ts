@@ -69,5 +69,9 @@ export class RangesService {
         this.savedRanges.splice(i, 1);
         this.savedRangesChanged.next(this.savedRanges);
     }
+    getRandomRange() {
+        var rndId = Math.floor(Math.random() * this.savedRanges.length);
+        return this.savedRanges[rndId];
+    }
 
 }

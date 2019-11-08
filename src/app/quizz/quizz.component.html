@@ -1,7 +1,30 @@
 <h2>Quizz</h2>
 
-<div class="row">
+<div class="row" *ngIf="!quizzStarted">
     <button type="button" class="btn btn-primary" (click)="onStartQuizz()">Démarrer</button>
     <div class="col-md-4">
+    </div>
+</div>
+<div class="row" *ngIf="quizzStarted">
+    <div class="col-6">
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let question of questions ; let i = index">
+                <div class="row">
+                    <div class="col-6">
+                        <p>range : {{ question.getRange() }} </p>
+                        <img [src]="question.cards[0].getImg()" width="50px"><img [src]="question.cards[1].getImg()" width="50px">
+                    </div>
+                    <div class="col-6 text-right">
+                        <button type="button" class="btn btn-success mx-3" (click)="inRange()"
+                            *ngIf="i == currentQuestion">IN</button>
+                        <button type="button" class="btn btn-danger mx-3" (click)="outRange()"
+                            *ngIf="i == currentQuestion">OUT</button>
+                        <span class="badge badge-success" *ngIf="i<currentQuestion && question.getResult()">OK</span>
+                        <span class="badge badge-danger" *ngIf="i<currentQuestion && !question.getResult()">KO</span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <button type="button" class="btn btn-primary" (click)="onStartQuizz()">Nouveau Quizz</button>
     </div>
 </div>
