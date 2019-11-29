@@ -1,0 +1,46 @@
+<div class="row">
+    <div class="col-4">
+        <span class="badge badge-pill badge-success" (click)="selectAll(true)" style="cursor: pointer">Tout</span>
+        <span class="badge badge-pill badge-warning" (click)="selectAll(false)" style="cursor: pointer">Rien</span>
+        <table class="table table-sm">
+            <tr>
+                <th></th>
+                <th>Date</th>
+            </tr>
+            <tr *ngFor="let quizzDate of quizzList; let i = index">
+                <td><input class="form-check-input" type="checkbox" [(ngModel)]="quizzChecked[i]" /></td>
+                <td> {{ quizzDate | date:'dd/MM/yyyy H:mm' }}</td>
+            </tr>
+        </table>
+        <button type="button" class="btn btn-primary my-2" (click)="onUpdateResults()">Mettre à jour ==></button>
+    </div>
+    <div class="col-8">
+        <div class="row">
+            <table class="table table-sm" *ngIf="selectedRange">
+                <tr *ngFor="let numRows of rangeRows">
+                    <td *ngFor="let numCols of rangeCols">
+                        <div [ngStyle]="resultStyles[numRows][numCols]">{{ rangeTable[numRows][numCols] }}</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="row">
+            <table class="table table-sm">
+                <tr>
+                    <th></th>
+                    <th>Range</th>
+                    <th>Nb ok</th>
+                    <th>Nb ko</th>
+                    <th>Resultat</th>
+                </tr>
+                <tr *ngFor="let item of displayedRangeResults | keyvalue">
+                    <td><input type="radio" [value]='item.key' name="range" [(ngModel)]="selectedRange" (click)="onRangeSelect(item.key)"></td>
+                    <td> {{ item.key }} </td>
+                    <td> {{ item.value.nbOk }}</td>
+                    <td> {{ item.value.nbKo }}</td>
+                    <td> {{ item.value.nbOk / (item.value.nbKo + item.value.nbOk) * 100 | number:'1.0-0' }}%</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

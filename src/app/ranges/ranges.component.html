@@ -4,30 +4,62 @@
     <div class="col-md-4">
         <h6>Saisissez votre range :</h6>
         <textarea class="form-control" id="rangeText" rows="3" [(ngModel)]="rangeText"></textarea>
-        <button type="button" class="btn btn-primary" (click)="onSubmit()">Valider ==></button>
+        <button type="button" class="btn btn-primary my-2" (click)="onSubmit()">Valider ==></button>
+        <div class="alert alert-primary" role="alert">
+            <p class="font-weight-normal">1. Commencez par définir votre range, puis "Valider".</p>
+            <p class="font-weight-light">Vous pouvez utiliser les notations suivantes :</p>
+            <ul>
+                <li class="font-weight-light">55+, soit toutes les paires entre 55 et AA</li>
+                <li class="font-weight-light">55-TT, soit toutes les paires entre 55 et TT [Bientôt disponible]</li>
+                <li class="font-weight-light">ATs+, soit de AKs à ATs</li>
+                <li class="font-weight-light">AT, une main simple</li>
+            </ul>
+            <p class="font-weight-light">Les éléments doivent être séparés par des virgules.</p>
+        </div>
+        <div class="alert alert-primary" role="alert">
+            <p class="font-weight-normal">2. Saisissez un nom puis "Mémoriser".</p>
+            <p class="font-weight-light">Votre range sera sauvegardée, avec son nom, et vous la retrouverez à votre
+                prochaine visite.</p>
+            <p class="font-weight-light">Si le nom saisi existe déjà, la range correspondante sera mise à jour.</p>
+        </div>
+        <div class="alert alert-primary" role="alert">
+            <p class="font-weight-normal">3. Passez aux quizz !!</p>
+        </div>
     </div>
+
     <div class="col-md-8">
-        <table class="table table-sm">
-            <tr *ngFor="let numRows of rangeRows">
-                <td *ngFor="let numCols of rangeCols"
-                    [ngStyle]="{'background-color': range.get(rangeTable[numRows][numCols]).ratio==0 ? 'white' : 'green'}">
-                    {{ rangeTable[numRows][numCols] }}
-                </td>
-            </tr>
-        </table>
-        <div class="alert alert-success" role="alert" *ngIf="submitSuccess">
-            {{ submitSuccess }}
+        <div class="row">
+            <table class="table table-sm" *ngIf="rangeName">
+                <tr *ngFor="let numRows of rangeRows">
+                    <td *ngFor="let numCols of rangeCols"
+                        [ngStyle]="{'background-color': range.get(rangeTable[numRows][numCols]).ratio==0 ? 'white' : 'green'}">
+                        {{ rangeTable[numRows][numCols] }}
+                    </td>
+                </tr>
+            </table>
         </div>
-        <div class="alert alert-danger" role="alert" *ngFor="let error of submitErrors">
-            {{ error }}
+        <div class="row">
+            <div class="alert alert-success" role="alert" *ngIf="submitSuccess">
+                {{ submitSuccess }}
+            </div>
+            <div class="alert alert-danger" role="alert" *ngFor="let error of submitErrors">
+                {{ error }}
+            </div>
         </div>
-        <input type="text" class="form-control" [(ngModel)]="rangeName">
-        <button type="button" class="btn btn-primary" (click)="onSave()">Mémoriser ==></button>
+        <div class="row">
+            <div class="col"><input type="text" class="form-control" [(ngModel)]="rangeName"></div>
+            <div class="col"><button type="button" class="btn btn-primary my-2" (click)="onSave()">Mémoriser
+                    ==></button></div>
+        </div>
         <ul class="list-group">
             <li class="list-group-item" *ngFor="let range of savedRanges; let i = index">
-                {{ range.getName() }}
-                <button type="button" class="btn btn-primary" (click)="onLoad(i)">Load</button>
-                <button type="button" class="btn btn-primary" (click)="onDelete(i)">Delete</button>
+                <div class="row">
+                    <div class="col-8">{{ range.getName() }}</div>
+                    <div class="col-4">
+                        <button type="button" class="btn btn-success m-2" (click)="onLoad(i)">Load</button>
+                        <button type="button" class="btn btn-warning m-2" (click)="onDelete(i)">Delete</button>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>

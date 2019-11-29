@@ -8,12 +8,23 @@ import { MenuComponent } from './menu/menu.component';
 import { RangesComponent } from './ranges/ranges.component';
 import { QuizzComponent } from './quizz/quizz.component';
 import { FormsModule } from '@angular/forms';
+import { RegisterComponent } from './register/register.component';
+import { LoginComponent } from './login/login.component';
+import { PasswordsIdenticalValidatorDirective } from './services/passwordsIdentical.directive';
+import { HttpClientModule } from '@angular/common/http';
+import { AuthGuard } from './services/auth.gard';
+import { ResultsComponent } from './results/results.component';
+import { HomeComponent } from './home/home.component';
 
 const appRoutes: Routes = [
-  { path: '',  redirectTo: '/', pathMatch: 'full' },
-  { path: 'ranges', component: RangesComponent },
-  { path: 'quizz', component: QuizzComponent },
-  { path: '**', redirectTo: '/'}
+  { path: '',  redirectTo: '/home', pathMatch: 'full' },
+  { path: 'ranges', component: RangesComponent, canActivate: [AuthGuard] },
+  { path: 'quizz', component: QuizzComponent, canActivate: [AuthGuard] },
+  { path: 'results', component: ResultsComponent, canActivate: [AuthGuard] },
+  { path: 'home', component: HomeComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: 'login', component: LoginComponent },
+  { path: '**', redirectTo: '/home'}
 ];
 
 @NgModule({
@@ -21,14 +32,20 @@ const appRoutes: Routes = [
     AppComponent,
     MenuComponent,
     RangesComponent,
-    QuizzComponent
+    QuizzComponent,
+    RegisterComponent,
+    LoginComponent,
+    PasswordsIdenticalValidatorDirective,
+    ResultsComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
     RouterModule.forRoot(appRoutes),
     NgbModule,
     NgbCollapseModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

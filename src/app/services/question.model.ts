@@ -1,6 +1,6 @@
 export class Card {
-    private color: number;
-    private level: number;
+     color: number;
+     level: number;
 
     constructor (color?: number, level?: number) {
         this.color = color;
@@ -9,7 +9,6 @@ export class Card {
     public randomCard() {
         this.color = Math.floor(Math.random() * 4 + 1);
         this.level = Math.floor(Math.random() * 13 + 2);
-        console.log(this.level + "/" + this.color);
     }
     public getCardString(): String {
         var handString: String;
@@ -66,20 +65,25 @@ export class Card {
     public getImg(): String {
         return "assets/img/"+this.getCardString()+".gif";
     }
+
 }
 
 export class Question {
-    private cards: Card[] = [];
-    private rangeName: String;
-    private answer: boolean; // true : in range / false : not in range
-    private correctAnswer : boolean; // la réponse qu'il faudrait donner
-    private result: boolean; // true : reponse correcte
+     cards: Card[] = [];
+     rangeName: String;
+     answer: boolean; // true : in range / false : not in range
+     correctAnswer : boolean; // la réponse qu'il faudrait donner
+     result: boolean; // true : reponse correcte
 
     constructor (rangeName: String) {
-        this.cards.push(new Card());
-        this.cards.push(new Card());
-        this.cards[0].randomCard();
-        this.cards[1].randomCard();
+
+        do {
+            this.cards.push(new Card());
+            this.cards.push(new Card());
+            this.cards[0].randomCard();
+            this.cards[1].randomCard(); 
+        } while (this.cards[0].getCardString() == this.cards[1].getCardString())
+        
         this.rangeName = rangeName;
     }
     setCorrectAnswer(correctAnswer: boolean) {
@@ -91,7 +95,6 @@ export class Question {
     setAnswer(answer: boolean) {
         this.answer = answer;
         this.setResult();
-        console.log("answer : " + answer);
     }
     setResult() {
         this.result = (this.answer == this.correctAnswer);
@@ -117,5 +120,15 @@ export class Question {
         if (card1 == card2) { return card1+card2; }
         else if (color1 == color2) { return (level1>level2) ? card1+card2+'s' : card2+card1+'s' }
         else { return (level1>level2) ? card1+card2+'o' : card2+card1+'o' }
+    }
+    fillFromObject(question: Question) {
+        this.rangeName = question.rangeName;
+        var card0 = new Card(question.cards[0].color, question.cards[0].level);
+        var card1 = new Card(question.cards[1].color, question.cards[1].level);
+
+        this.cards = [card0, card1];
+        this.answer = question.answer;
+        this.correctAnswer = question.correctAnswer;
+        this.result = question.result;
     }
 }

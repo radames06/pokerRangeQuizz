@@ -1,0 +1,30 @@
+<form #registerForm="ngForm" (ngSubmit)="onSubmit()" appPasswordsIdentical>
+    <div class="form-group">
+        <label for="email">Email address</label>
+        <input type="email" class="form-control" id="email" placeholder="Enter email" [(ngModel)]="emailNg" name="email"
+            #email="ngModel" required email>
+        <div *ngIf="email.invalid && email.touched" class="alert alert-danger">
+            Saissez un email valide.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Password" [(ngModel)]="passwordNg"
+            name="password" #password="ngModel" required minlength="6">
+        <div *ngIf="password.invalid && password.touched" class="alert alert-danger">
+            Le mot de passe doit contenir 6 caractères minimum.
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" class="form-control" id="confirmPassword" placeholder="Password"
+            [(ngModel)]="confirmPasswordNg" name="confirmPassword" #confirmPassword="ngModel" required minlength="6">
+        <div *ngIf="registerForm.errors && password.touched && confirmPassword.touched" class="alert alert-danger">
+            Les deux passwords ne sont pas identiques.
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="!registerForm.form.valid">Submit</button>
+</form>
+<div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+</div>
