@@ -14,14 +14,15 @@ import { NgbRatingConfig, NgbDatepickerI18n } from '@ng-bootstrap/ng-bootstrap';
 export class ResultsComponent implements OnInit {
 
   private results: Result[]; // tous les résultats des quizz {date, range, ok, ko}
-  private quizzList: Date[]; // liste des dates des quizz
+  totalResult: { ok: number, ko: number };
+  quizzList: Date[]; // liste des dates des quizz
   private questionsList: Map<number, Question[]>; // liste des questions (incl. résultat) par quizz (identifié par une date)
   private subscriptionResult: Subscription;
   private subscriptionQuizzList: Subscription;
   private subscriptionQuestions: Subscription;
   private quizzChecked: boolean[]; // liste des quizz selectionnés
-  private displayedRangeResults: Map<String, { nbOk: number, nbKo: number }>;
-  private selectedRange: String;
+  displayedRangeResults: Map<String, { nbOk: number, nbKo: number }> = new Map();
+  selectedRange: String;
   private savedRanges: RangePoker[];
   private rangePoker: RangePoker;
   private resultStyles: Object[][];
@@ -41,7 +42,7 @@ export class ResultsComponent implements OnInit {
       this.results = resultsList;
     })
     this.subscriptionQuizzList = this.resultsService.quizzListChanged.subscribe((quizzList: Date[]) => {
-      this.quizzList = quizzList.sort((a: Date, b: Date) => { return a.getTime() - b.getTime()});
+      this.quizzList = quizzList.sort((a: Date, b: Date) => { return a.getTime() - b.getTime() });
       this.selectAll(false);
     })
 
@@ -74,6 +75,7 @@ export class ResultsComponent implements OnInit {
 
   onUpdateResults() {
     this.displayedRangeResults = new Map();
+    this.totalResult = {ok: 0, ko: 0};
     this.results.forEach(item => {
       if (this.quizzChecked[this.quizzList.indexOf(item.getDate())]) {
         if (this.displayedRangeResults.has(item.getRange())) {
@@ -83,6 +85,8 @@ export class ResultsComponent implements OnInit {
         } else {
           this.displayedRangeResults.set(item.getRange(), { nbOk: item.getOk(), nbKo: item.getKo() });
         }
+        this.totalResult.ok += item.getOk();
+        this.totalResult.ko += item.getKo();
       }
     })
   }
@@ -120,7 +124,7 @@ export class ResultsComponent implements OnInit {
     this.questionsResultMap = new Map();
     for (var i = 0; i < this.quizzList.length; i++) { // pour chaque quizz
       if (this.quizzChecked[i]) {                 // si le quizz est coché
-       for (let question of this.questionsList.get(this.quizzList[i].getTime())) { // pour chaque question du quizz
+        for (let question of this.questionsList.get(this.quizzList[i].getTime())) { // pour chaque question du quizz
           if (question.getRange() == rangeName) {  // si la question est dans la range selectionnée
             if (this.questionsResultMap.has(question.getCardsFormatted())) {
               var nbOk = this.questionsResultMap.get(question.getCardsFormatted()).ok;
@@ -150,4 +154,8 @@ export class ResultsComponent implements OnInit {
 
     return (ratio == -1 ? "rgb(255,255,255)" : "rgb(" + r + "," + g + "," + b + ")");
   }
+  getDisplayResults() {
+    return this.displayedRangeResults.size>0;
+  }
 }
+

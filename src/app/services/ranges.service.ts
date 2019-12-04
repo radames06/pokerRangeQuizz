@@ -90,6 +90,15 @@ export class RangesService {
     getTable() { return this.rangeTable }
     getRange() { return this.range }
     getSavedRanges() { return this.savedRanges }
+    getRangeByName(name: String): RangePoker {
+        console.log("getRangeByName : " + name);
+        var returnItem: RangePoker;
+        this.savedRanges.forEach(item => {
+            console.log(item.getName());
+            if (item.getName().valueOf() == name) returnItem = item;
+        })
+        return returnItem;
+    }
 
     saveRange(name: String) { // OK
         // Name already exists ? 
@@ -127,7 +136,7 @@ export class RangesService {
         }
     }
     loadRange(i: number) { // OK
-        this.range = this.savedRanges[i]
+        this.range = this.savedRanges[i].getClone();
         this.rangeChanged.next(this.range);
     }
     deleteRange(i: number) { // OK
@@ -142,10 +151,7 @@ export class RangesService {
             });
 
     }
-    getRandomRange() { // OK
-        var rndId = Math.floor(Math.random() * this.savedRanges.length);
-        return this.savedRanges[rndId];
-    }
+
 
     parseRange(rangeText: String) {
         var rangeItems = rangeText.replace(' ', '').split(',');

@@ -11,7 +11,7 @@ import { RangesService } from '../services/ranges.service';
 export class MenuComponent implements OnInit, OnDestroy {
 
   private userSubscription: Subscription;
-  private userMail: String;
+  userMail: String;
   navbarOpen = false;
 
   constructor(private authService: AuthService, private rangeService: RangesService) { }

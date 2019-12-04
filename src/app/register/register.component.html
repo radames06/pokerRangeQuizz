@@ -18,7 +18,7 @@
     <div class="form-group">
         <label for="confirmPassword">Confirm password</label>
         <input type="password" class="form-control" id="confirmPassword" placeholder="Password"
-            [(ngModel)]="confirmPasswordNg" name="confirmPassword" #confirmPassword="ngModel" required minlength="6">
+            [(ngModel)]="passwordConfirmNg" name="confirmPassword" #confirmPassword="ngModel" required minlength="6">
         <div *ngIf="registerForm.errors && password.touched && confirmPassword.touched" class="alert alert-danger">
             Les deux passwords ne sont pas identiques.
         </div>

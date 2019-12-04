@@ -15,6 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthGuard } from './services/auth.gard';
 import { ResultsComponent } from './results/results.component';
 import { HomeComponent } from './home/home.component';
+import { AboutComponent } from './about/about.component';
 
 const appRoutes: Routes = [
   { path: '',  redirectTo: '/home', pathMatch: 'full' },
@@ -24,6 +25,7 @@ const appRoutes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
+  { path: 'about', component: AboutComponent },
   { path: '**', redirectTo: '/home'}
 ];
 
@@ -37,7 +39,8 @@ const appRoutes: Routes = [
     LoginComponent,
     PasswordsIdenticalValidatorDirective,
     ResultsComponent,
-    HomeComponent
+    HomeComponent,
+    AboutComponent
   ],
   imports: [
     BrowserModule,

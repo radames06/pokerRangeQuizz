@@ -13,16 +13,16 @@ import { Card } from '../services/question.model';
 export class RangesComponent implements OnInit {
 
   private range: Map<String, RangeVal>;
-  private rangeName: String;
-  private rangeText: String;
+  rangeName: String;
+  rangeText: String;
   private rangeTable: String[][];
   private rangeNumRows: number;
   private rangeNumCols: number;
-  private rangeRows: number[];
-  private rangeCols: number[];
-  private submitErrors: String[];
-  private submitSuccess: String;
-  private savedRanges: RangePoker[] = [];
+  rangeRows: number[];
+  rangeCols: number[];
+  submitErrors: String[];
+  submitSuccess: String;
+  savedRanges: RangePoker[] = [];
 
   subscriptionRange: Subscription;
   subscriptionSaved: Subscription;
