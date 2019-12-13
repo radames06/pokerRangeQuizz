@@ -40,7 +40,7 @@ export class RangesService {
         this.range = new RangePoker();
         
         var url: string = 'https://eventmanager-492e5.firebaseio.com/ranges/' +
-            encodeURIComponent(this.authService.userMail.toString().replace('.', '').replace('@', '')) + '.json';
+            encodeURIComponent(this.authService.userMail.toString().replace(/\./gi, '').replace('@', '')) + '.json';
 
         let httpParams = new HttpParams().set('auth', this.authService.token);
 
@@ -94,7 +94,6 @@ export class RangesService {
         console.log("getRangeByName : " + name);
         var returnItem: RangePoker;
         this.savedRanges.forEach(item => {
-            console.log(item.getName());
             if (item.getName().valueOf() == name) returnItem = item;
         })
         return returnItem;
@@ -115,7 +114,7 @@ export class RangesService {
         if (nameExists) { // mise à jour d'une range existante
             console.log("range already existing");
             var url: string = 'https://eventmanager-492e5.firebaseio.com/ranges/' +
-                encodeURIComponent(this.range.getOwner().toString().replace('.', '').replace('@', '')) + '.json';
+                encodeURIComponent(this.range.getOwner().toString().replace(/\./gi, '').replace('@', '')) + '.json';
             let httpParams = new HttpParams().set('auth', this.authService.token);
             this.http.patch(url, this.range.getJson(), { params: httpParams })
                 .subscribe((response: RangePoker) => {
@@ -126,7 +125,7 @@ export class RangesService {
             console.log("new range");
             this.range.setName(name);
             this.range.setOwner(this.authService.userMail);
-            var url: string = 'https://eventmanager-492e5.firebaseio.com/ranges/' + encodeURIComponent(this.range.getOwner().toString().replace('.', '').replace('@', '')) + '.json';
+            var url: string = 'https://eventmanager-492e5.firebaseio.com/ranges/' + encodeURIComponent(this.range.getOwner().toString().replace(/\./gi, '').replace('@', '')) + '.json';
             let httpParams = new HttpParams().set('auth', this.authService.token);
             this.http.patch(url, this.range.getJson(), { params: httpParams })
                 .subscribe((response: RangePoker) => {
@@ -141,7 +140,7 @@ export class RangesService {
     }
     deleteRange(i: number) { // OK
         var url: string = 'https://eventmanager-492e5.firebaseio.com/ranges/' +
-            encodeURIComponent(this.range.getOwner().toString().replace('.', '').replace('@', '')) +
+            encodeURIComponent(this.range.getOwner().toString().replace(/\./gi, '').replace('@', '')) +
             '/' + this.range.getName() + '.json';
         let httpParams = new HttpParams().set('auth', this.authService.token);
         this.http.delete(url, { params: httpParams })
@@ -154,7 +153,7 @@ export class RangesService {
 
 
     parseRange(rangeText: String) {
-        var rangeItems = rangeText.replace(' ', '').split(',');
+        var rangeItems = rangeText.replace(/\s/g, '').split(',');
         var rangeSimplifiee: String[] = [];
         var rangeMap: Map<String, RangeVal> = this.range.getMap();
         var submitErrors: String[] = [];

@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ResultsService, Result } from '../services/results.service';
 import { Subscription } from 'rxjs';
 import { Question } from '../services/question.model';
-import { rangeFormatted, RangePoker } from '../services/range.poker.model';
+import { RangePoker } from '../services/range.poker.model';
 import { RangesService } from '../services/ranges.service';
-import { NgbRatingConfig, NgbDatepickerI18n } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-results',
@@ -26,6 +25,7 @@ export class ResultsComponent implements OnInit {
   private savedRanges: RangePoker[];
   private rangePoker: RangePoker;
   private resultStyles: Object[][];
+  private tipContent: String[][];
   private questionsResultMap: Map<String, { ok: number, ko: number }>;
 
   rangeTable: String[][];
@@ -61,6 +61,7 @@ export class ResultsComponent implements OnInit {
     this.savedRanges = this.rangeService.getSavedRanges();
     this.rangePoker = new RangePoker();
     this.resultStyles = Array(this.rangeNumRows).fill(this.rangeNumRows).map((x, i) => Array(this.rangeNumCols).fill(this.rangeNumCols));
+    this.tipContent = Array(this.rangeNumRows).fill(this.rangeNumRows).map((x, i) => Array(this.rangeNumCols).fill(this.rangeNumCols));
   }
 
   ngOnDestroy() {
@@ -77,7 +78,7 @@ export class ResultsComponent implements OnInit {
     this.displayedRangeResults = new Map();
     this.totalResult = {ok: 0, ko: 0};
     this.results.forEach(item => {
-      if (this.quizzChecked[this.quizzList.indexOf(item.getDate())]) {
+      if (this.quizzChecked[this.quizzList.map(Number).indexOf(+item.getDate())]) {
         if (this.displayedRangeResults.has(item.getRange())) {
           var nbOk = this.displayedRangeResults.get(item.getRange()).nbOk;
           var nbKo = this.displayedRangeResults.get(item.getRange()).nbKo;
@@ -92,7 +93,6 @@ export class ResultsComponent implements OnInit {
   }
 
   getResultStyle() {
-    console.log(this.rangePoker);
     for (var row in this.rangeRows) {
       for (var col in this.rangeCols) {
         // calcul du ratio
@@ -101,8 +101,10 @@ export class ResultsComponent implements OnInit {
           var ok = this.questionsResultMap.get(this.rangeService.getTable()[row][col]).ok;
           var ko = this.questionsResultMap.get(this.rangeService.getTable()[row][col]).ko;
           result = ok / (ok + ko);
+          this.tipContent[row][col] = "ok: " + ok + " / total: " + (ok+ko);
         } else {
           result = -1;
+          this.tipContent[row][col] = "";
         }
         // la main est-elle dans la range ? 
         if (this.rangePoker.getMap().get(this.rangeService.getTable()[row][col]).getRatio() == 1) {
@@ -110,6 +112,7 @@ export class ResultsComponent implements OnInit {
         } else {
           this.resultStyles[row][col] = { 'font-weight': 'normal', 'background-color': this.getRGB(result) };
         }
+        
       }
     }
   }
@@ -142,6 +145,10 @@ export class ResultsComponent implements OnInit {
     }
 
     this.getResultStyle();
+  }
+
+  onDeleteResult(i: number) {
+    this.resultsService.deleteResult(this.quizzList[i]);
   }
 
   getRGB(ratio: number) {

@@ -19,27 +19,79 @@ export class ResultsService {
     saveResult(result: Map<String, { ok: number, ko: number }>, questions: Question[]) {
         console.log("Save result of Quizz");
         var saveDate: Date = new Date();
-        var url: string = 'https://eventmanager-492e5.firebaseio.com/quizzresults/' + encodeURIComponent(this.authService.userMail.toString().replace('.', '').replace('@', '')) + '.json';
+        var url: string = 'https://eventmanager-492e5.firebaseio.com/quizzresults/' + encodeURIComponent(this.authService.userMail.toString().replace(/\./gi, '').replace('@', '')) + '.json';
         let httpParams = new HttpParams().set('auth', this.authService.token);
         this.http.patch(url, this.getResultJson(result, saveDate), { params: httpParams })
             .subscribe((response: Object) => {
-                //
+                this.addResults(result, saveDate);
+                this.resultsChanged.next(this.results);
             },
                 error => {
                     console.log("Save Result Error");
                     console.log(error);
                 });
 
-        var url: string = 'https://eventmanager-492e5.firebaseio.com/quizzquestions/' + encodeURIComponent(this.authService.userMail.toString().replace('.', '').replace('@', '')) + '.json';
+        var url: string = 'https://eventmanager-492e5.firebaseio.com/quizzquestions/' + encodeURIComponent(this.authService.userMail.toString().replace(/\./gi, '').replace('@', '')) + '.json';
         this.http.patch(url, this.getQuestionsJson(questions, saveDate), { params: httpParams })
             .subscribe((response: Object) => {
-                //
+                this.addQuestions(questions, saveDate);
+                this.refreshQuizzList();
+                this.questionsChanged.next(this.questions);
+                this.quizzListChanged.next(this.quizzList);
             },
                 error => {
                     console.log("Save Question Error");
                     console.log(error);
                 });
+    }
+    deleteResult(quizz: Date) {
+        console.log("deleteResult");
+        var url: string = 'https://eventmanager-492e5.firebaseio.com/quizzresults/' +
+            encodeURIComponent(this.authService.userMail.toString().replace(/\./gi, '').replace('@', '')) + '/' +
+            encodeURIComponent(quizz.toString()) + '.json';
+        let httpParams = new HttpParams().set('auth', this.authService.token);
+        this.http.delete(url, { params: httpParams })
+            .subscribe((response: string) => {
+                this.removeResultFromArray(quizz);
+                this.resultsChanged.next(this.results);
+            });
 
+        var url: string = 'https://eventmanager-492e5.firebaseio.com/quizzquestions/' +
+            encodeURIComponent(this.authService.userMail.toString().replace(/\./gi, '').replace('@', '')) + '/' +
+            encodeURIComponent(quizz.toString()) + '.json';
+        this.http.delete(url, { params: httpParams })
+            .subscribe((response: string) => {
+                this.questions.delete(quizz.getTime());
+                this.refreshQuizzList();
+                this.questionsChanged.next(this.questions);
+                this.quizzListChanged.next(this.quizzList);
+            });
+    }
+
+    addResults(newResults: Map<String, { ok: number, ko: number}>, saveDate: Date) {
+        newResults.forEach((value, key) => {
+            this.results.push(new Result(saveDate, key, value.ok, value.ok))
+        })
+    }
+    addQuestions(newQuestions: Question[], saveDate: Date) {
+        this.questions.set(saveDate.getTime(), newQuestions);
+    }
+    refreshQuizzList() {
+        var newQuizzList: Date[] = [];
+        this.questions.forEach((value, key) => {
+            newQuizzList.push(new Date(key));
+        })
+        this.quizzList = newQuizzList;
+    }
+    removeResultFromArray(quizz: Date) {
+        var newResults: Result[] = [];
+        this.results.forEach(item => {
+            //console.log(item);
+            if (item.getDate().getTime() != quizz.getTime()) {
+                newResults.push(item);
+            }
+        })
+        this.results = newResults;
     }
 
     public getResultJson(result: Map<String, { ok: number, ko: number }>, saveDate: Date) {
@@ -55,7 +107,7 @@ export class ResultsService {
         this.results = [];
         this.quizzList = [];
         var url: string = 'https://eventmanager-492e5.firebaseio.com/quizzresults/' +
-            encodeURIComponent(this.authService.userMail.toString().replace('.', '').replace('@', '')) + '.json';
+            encodeURIComponent(this.authService.userMail.toString().replace(/\./gi, '').replace('@', '')) + '.json';
         let httpParams = new HttpParams().set('auth', this.authService.token);
         this.http.get(url, { params: httpParams })
             .subscribe((response: any) => {
@@ -76,13 +128,12 @@ export class ResultsService {
                     this.quizzList = [];
                     this.resultsChanged.next(this.results);
                     this.quizzListChanged.next(this.quizzList);
-                    console.log(this.quizzList);
                 }
             })
 
         this.questions = new Map();
         var url: string = 'https://eventmanager-492e5.firebaseio.com/quizzquestions/' +
-            encodeURIComponent(this.authService.userMail.toString().replace('.', '').replace('@', '')) + '.json';
+            encodeURIComponent(this.authService.userMail.toString().replace(/\./gi, '').replace('@', '')) + '.json';
         this.http.get(url, { params: httpParams })
             .subscribe((response: any) => {
                 if (response) {
@@ -93,7 +144,7 @@ export class ResultsService {
                     })
                     localQuestion.forEach((item: Question[], key: number) => {
                         var newQuestionArray: Question[] = [];
-                        for(var question of item) {
+                        for (var question of item) {
                             var newQuestion = new Question('tmp');
                             newQuestion.fillFromObject(question);
                             newQuestionArray.push(newQuestion);
@@ -106,7 +157,7 @@ export class ResultsService {
                     this.questionsChanged.next(this.questions);
                 }
             })
-            
+
     }
 }
 

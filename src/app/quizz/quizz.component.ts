@@ -3,7 +3,7 @@ import { Question } from '../services/question.model';
 import { RangesService } from '../services/ranges.service';
 import { ResultsService } from '../services/results.service';
 import { RangePoker } from '../services/range.poker.model';
-import { Subscription } from 'rxjs';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-quizz',
@@ -21,7 +21,7 @@ export class QuizzComponent implements OnInit {
   rangeChecked: boolean[]; // Liste des ranges cochées sur le quizz
   private rangeList: String[]; // Liste des ranges selectionnées
 
-  constructor(private rangesService: RangesService, private resultsSerivce: ResultsService) { }
+  constructor(private rangesService: RangesService, private resultsSerivce: ResultsService, private router: Router) { }
 
   ngOnInit() {
     this.ranges = this.rangesService.getSavedRanges();
@@ -62,9 +62,7 @@ export class QuizzComponent implements OnInit {
 
   getRandomRange() { // OK
     console.log("getRandomRange");
-    console.log(this.rangeList.length);
     var rndId = Math.floor(Math.random() * this.rangeList.length);
-    console.log(rndId);
     return this.rangeList[rndId];
   }
 
@@ -96,5 +94,6 @@ export class QuizzComponent implements OnInit {
   onStopQuizz() {
     this.quizzStarted = false;
     this.resultsSerivce.saveResult(this.results, this.questions);
+    this.router.navigate(['/results']);
   }
 }

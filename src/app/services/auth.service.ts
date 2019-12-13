@@ -22,6 +22,8 @@ export class AuthService {
     isLoggedIn: boolean = false;
     redirectUrl: String;
     token: string;
+    private tokenExpirationTimer: any;
+
 
     constructor(private http: HttpClient, private router: Router) { }
 
@@ -88,13 +90,22 @@ export class AuthService {
         this.isLoggedIn = true;
         this.token = token;
         this.user.next(user);
+        this.autoLogout(expiresIn * 1000);
     }
     logout() {
         this.user.next(null);
         this.userMail = new String();
         this.isLoggedIn = false;
         this.router.navigate(['/login']);
+        if (this.tokenExpirationTimer) {
+            clearTimeout(this.tokenExpirationTimer);
+        }
+        this.tokenExpirationTimer = null;
     }
-
+    autoLogout(expirationDuration: number) {
+        this.tokenExpirationTimer = setTimeout(() => {
+            this.logout();
+        }, expirationDuration)
+    }
 
 }

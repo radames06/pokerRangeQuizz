@@ -1,6 +1,13 @@
 <h2>Quizz</h2>
+<hr>
 <div class="row" *ngIf="!quizzStarted">
     <h5>Selectionnez les ranges à inclure dans le quizz :</h5>
+</div>
+<div class="row" *ngIf="!quizzStarted">
+    <span class="badge badge-pill badge-success" (click)="selectAll(true)" style="cursor: pointer">Tout</span>
+    <span class="badge badge-pill badge-warning" (click)="selectAll(false)" style="cursor: pointer">Rien</span>
+</div>
+<div class="row" *ngIf="!quizzStarted">
     <table class="table table-sm">
         <tr>
             <th></th>
